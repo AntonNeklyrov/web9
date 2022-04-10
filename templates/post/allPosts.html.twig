@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Посты{% endblock %}
+
+{% block body %}
+    <div class="table-wrapper">
+        <table>
+            <thead>
+            <tr>
+                <td>id</td>
+                <td>post_label</td>
+                <td>post_img</td>
+                <td>$post_data</td>
+                <td>$$post_trailer</td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for post in posts %}
+                <tr>
+                    <td>{{ post.id }}</td>
+                    <td>{{ post.post_label }}</td>
+                    <td>{{ post.post_img }}</td>
+                    <td>{{ post.post_data }}</td>
+                    <td>{{ post.post_trailer }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">Посты не сделаны</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
