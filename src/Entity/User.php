@@ -2,34 +2,45 @@
 
 namespace App\Entity;
 
-use App\Repository\UsersRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
 
-#[ORM\Entity(repositoryClass: UsersRepository::class)]
-class Users
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[UniqueEntity(fields: ['user_email'], message: 'There is already an account with this user_email')]
+class User implements UserInterface, \Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id;
 
     #[ORM\Column(type: 'string', length: 100)]
-    private $user_name;
+    private ?string $user_name;
 
     #[ORM\Column(type: 'string', length: 100)]
-    private $user_surname;
+    private ?string $user_surname;
 
     #[ORM\Column(type: 'string', length: 200)]
-    private $user_email;
+    private ?string $user_email;
 
     #[ORM\Column(type: 'string', length: 14)]
-    private $user_phone;
+    private ?string $user_phone;
 
     #[ORM\Column(type: 'string', length: 50)]
-    private $user_password;
+    private ?string $user_password;
 
     #[ORM\Column(type: 'boolean')]
-    private $is_admin;
+    private ?bool $is_admin;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $isVerified = false;
+
+
+    #[ORM\Column(type: 'json')]
+
+    private array $roles = [];
 
     public function getId(): ?int
     {
@@ -106,5 +117,48 @@ class Users
         $this->is_admin = $is_admin;
 
         return $this;
+    }
+
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->user_email;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): self
+    {
+        $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->user_password;
     }
 }

@@ -4,22 +4,35 @@ namespace App\DataFixtures;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use
 use App\Entity\Post;
-use App\Entity\Users;
+use App\Entity\User;
 use \DateTime;
 
 class AppFixtures extends Fixture
 {
+    /**
+     * @throws \Exception
+     */
     public function load(ObjectManager $manager): void
     {
-        for ($i=0; $i < 15; $i++) {
+        for ($i=0; $i < 5; $i++) {
             $post = new Post();
             $post->setPostLabel("Постер" . $i);
-            $post->setsetPostImg("user/img/" . uniqid() . ".png");
-            $psot->setPostData($this->generateDate());
-            $post->setPostTrailer("https://www.youtube.com/" . uniqid);
-            $manager->persist($screenshot);
+            $post->setPostImg("user/img/" . uniqid() . ".png");
+            $post->setPostData((string)$this->generateDate());
+            $post->setPostTrailer("https://www.youtube.com/" . uniqid());
+            $post->setPostStatus(true);
+            $manager->persist($post);
+        }
+
+        for ($i=5; $i < 10; $i++) {
+            $post = new Post();
+            $post->setPostLabel("Постер" . $i);
+            $post->setPostImg("user/img/" . uniqid() . ".png");
+            $post->setPostData((string)$this->generateDate());
+            $post->setPostTrailer("https://www.youtube.com/" . uniqid());
+            $post->setPostStatus(false);
+            $manager->persist($post);
         }
 
         for ($i=0; $i < 15; $i++) {
@@ -30,6 +43,11 @@ class AppFixtures extends Fixture
             $user->setUserPhone(rand(1_000_000_000, 9_999_999_999));
             $user->setUserPassword($i*$i);
             $user->setIsAdmin((bool)random_int(0, 1));
+            if($i % 4 == 0){
+                $user->setRoles(["ROLE_ADMIN"]);
+            }
+            else
+                $user->setRoles(["ROLE_USER"]);
             $manager->persist($user);
         }
 

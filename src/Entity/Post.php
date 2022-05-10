@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\PostRepository;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Boolean;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 class Post
@@ -11,19 +12,22 @@ class Post
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $post_label;
+    private ?string $post_label;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $post_img;
+    private ?string $post_img;
 
     #[ORM\Column(type: 'string', length: 8)]
-    private $post_data;
+    private ?string $post_data;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $post_trailer;
+    private ?string $post_trailer;
+
+    #[ORM\Column(type: 'boolean')]
+    private ?boolean $status;
 
     public function getId(): ?int
     {
@@ -77,4 +81,22 @@ class Post
 
         return $this;
     }
+
+    public function __toString(): string
+   {
+       return $this->post_label;
+   }
+
+    public function getPostStatus(): ?bool
+    {
+        return $this->status;
+    }
+
+    public function setPostStatus(bool $status): self
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+
 }
