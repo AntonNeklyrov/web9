@@ -29,6 +29,10 @@ class Post
     #[ORM\Column(type: 'boolean')]
     private ?boolean $status;
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'posts')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $author;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -95,6 +99,18 @@ class Post
     public function setPostStatus(bool $status): self
     {
         $this->status = $status;
+        return $this;
+    }
+
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(User $author): self
+    {
+        $this->author = $author;
+
         return $this;
     }
 
