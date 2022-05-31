@@ -2,10 +2,19 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\PostRepository;
 use Doctrine\ORM\Mapping as ORM;
 use phpDocumentor\Reflection\Types\Boolean;
 
+#[ApiResource(
+    collectionOperations: [
+        'get' => ['method' => 'get'],
+    ],
+    itemOperations: [
+        'get' => ['method' => 'get'],
+    ],
+)]
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 class Post
 {
@@ -20,8 +29,8 @@ class Post
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $post_img;
 
-    #[ORM\Column(type: 'string', length: 8)]
-    private ?string $post_data;
+    #[ORM\Column(type: 'datetime', nullable: false)]
+    private ?\DateTimeInterface $post_data;
 
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $post_trailer;
@@ -62,12 +71,12 @@ class Post
         return $this;
     }
 
-    public function getPostData(): ?string
+    public function getPostData(): ?\DateTimeInterface
     {
         return $this->post_data;
     }
 
-    public function setPostData(string $post_data): self
+    public function setPostData(\DateTimeInterface $post_data): self
     {
         $this->post_data = $post_data;
 

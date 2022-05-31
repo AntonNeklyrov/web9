@@ -17,7 +17,7 @@ class PostType extends AbstractType
         $builder
             ->add('post_label', TextType::class)
             ->add('post_img', FileType::class)
-            ->add('post_data',TextType::class)
+            ->add('post_data', \DateTime::class)
             ->add('post_trailer',TextType::class)
             ->add('save', SubmitType::class)
         ;

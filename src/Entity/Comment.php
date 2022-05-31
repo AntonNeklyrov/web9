@@ -2,9 +2,19 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\CommentRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource(
+    collectionOperations: [
+        'get' => ['method' => 'get'],
+    ],
+    itemOperations: [
+        'get' => ['method' => 'get'],
+    ],
+)]
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 class Comment
 {
@@ -16,8 +26,8 @@ class Comment
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private ?string $text;
 
-    #[ORM\Column(type: 'string', length: 8, nullable: false)]
-    private ?string $date;
+    #[ORM\Column(type: 'datetime', nullable: false)]
+    private ?\DateTimeInterface $date;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
@@ -46,12 +56,12 @@ class Comment
         return $this;
     }
 
-    public function getDate(): ?string
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }
 
-    public function setDate(string $date): self
+    public function setDate(\DateTimeInterface $date): self
     {
         $this->date = $date;
 

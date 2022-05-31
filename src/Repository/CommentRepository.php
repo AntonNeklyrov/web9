@@ -22,8 +22,8 @@ class CommentRepository extends ServiceEntityRepository
     }
 
     /**
-     * @throws ORMException
-     * @throws OptimisticLockException
+     * @param Comment $entity
+     * @param bool $flush
      */
     public function add(Comment $entity, bool $flush = true): void
     {
@@ -34,8 +34,8 @@ class CommentRepository extends ServiceEntityRepository
     }
 
     /**
-     * @throws ORMException
-     * @throws OptimisticLockException
+     * @param Comment $entity
+     * @param bool $flush
      */
     public function remove(Comment $entity, bool $flush = true): void
     {
@@ -62,15 +62,15 @@ class CommentRepository extends ServiceEntityRepository
     }
     */
 
-    /*
-    public function findOneBySomeField($value): ?Comment
+     public function getCommentsById($id): array
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
+            ->andWhere('c.post = :id')
+            ->andWhere('c.status = true')
+            ->setParameter('id', $id)
+            ->orderBy('c.date', 'DESC')
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getResult()
+            ;
     }
-    */
 }

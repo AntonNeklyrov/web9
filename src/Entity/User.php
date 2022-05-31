@@ -2,12 +2,22 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ApiResource(
+    collectionOperations: [
+        'get' => ['method' => 'get'],
+    ],
+    itemOperations: [
+        'get' => ['method' => 'get'],
+    ],
+)]
+#[ORM\Table(name: '`user`')]
 #[UniqueEntity(fields: ['user_email'], message: 'There is already an account with this user_email')]
 class User implements UserInterface, \Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface
 {
@@ -37,10 +47,11 @@ class User implements UserInterface, \Symfony\Component\Security\Core\User\Passw
     #[ORM\Column(type: 'boolean')]
     private bool $isVerified = false;
 
-
     #[ORM\Column(type: 'json')]
-
     private array $roles = [];
+
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $apiToken;
 
     public function getId(): ?int
     {
@@ -122,7 +133,6 @@ class User implements UserInterface, \Symfony\Component\Security\Core\User\Passw
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
@@ -160,5 +170,17 @@ class User implements UserInterface, \Symfony\Component\Security\Core\User\Passw
     public function getPassword(): ?string
     {
         return $this->user_password;
+    }
+
+    public function getApiToken(): ?string
+    {
+        return $this->apiToken;
+    }
+
+    public function setApiToken(string $apiToken): self
+    {
+        $this->apiToken = $apiToken;
+
+        return $this;
     }
 }

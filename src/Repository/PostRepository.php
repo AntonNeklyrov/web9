@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Post;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -73,4 +75,29 @@ class PostRepository extends ServiceEntityRepository
         ;
     }
     */
+
+
+    public function getLastPosts(): array
+    {
+        return $this->createQueryBuilder('n')
+            ->orderBy('n.date', 'DESC')
+            ->getQuery()
+            ->setMaxResults(4)
+            ->getResult()
+            ;
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function getCountPost(): int
+    {
+        return $this->createQueryBuilder('n')
+            ->select('count(n.id)')
+            ->getQuery()
+            ->getSingleScalarResult()
+            ;
+    }
+
 }

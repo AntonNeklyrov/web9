@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use LogicException;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,6 +16,10 @@ class SecurityController extends AbstractController
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_main');
+        }
+
         $error = $authenticationUtils->getLastAuthenticationError();
 
         // last username entered by the user
@@ -25,10 +32,16 @@ class SecurityController extends AbstractController
 
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
     {
-        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+        $session = $this->container->get('session');
+        $session->clear();
+        throw new LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Comment;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use App\Entity\Post;
@@ -15,26 +16,6 @@ class AppFixtures extends Fixture
      */
     public function load(ObjectManager $manager): void
     {
-        for ($i=0; $i < 5; $i++) {
-            $post = new Post();
-            $post->setPostLabel("Постер" . $i);
-            $post->setPostImg("user/img/" . uniqid() . ".png");
-            $post->setPostData((string)$this->generateDate());
-            $post->setPostTrailer("https://www.youtube.com/" . uniqid());
-            $post->setPostStatus(true);
-            $manager->persist($post);
-        }
-
-        for ($i=5; $i < 10; $i++) {
-            $post = new Post();
-            $post->setPostLabel("Постер" . $i);
-            $post->setPostImg("user/img/" . uniqid() . ".png");
-            $post->setPostData((string)$this->generateDate());
-            $post->setPostTrailer("https://www.youtube.com/" . uniqid());
-            $post->setPostStatus(false);
-            $manager->persist($post);
-        }
-
         for ($i=0; $i < 15; $i++) {
             $user = new User();
             $user->setUserName('Имя - '.$i);
@@ -48,9 +29,38 @@ class AppFixtures extends Fixture
             }
             else
                 $user->setRoles(["ROLE_USER"]);
-            $manager->persist($user);
-        }
+            $user->setApiToken("apiToken".($i+1));
 
+            $manager->persist($user);
+
+            for($j=0; $j < 10; $j++){
+                $post = new Post();
+                $post->setPostLabel("Постер" . $i + $j);
+                $post->setPostImg("user/img/" . uniqid() . ".png");
+                $post->setPostData($this->generateDate());
+                $post->setPostTrailer("https://www.youtube.com/" . uniqid());
+                if($j % 2 == 0){
+                    $post->setPostStatus(false);
+                }
+                else $post->setPostStatus(true);
+                $post->setAuthor($user);
+                $manager->persist($post);
+
+                for($k=0; $j < 4; $k++){
+                    $comment = new Comment();
+                    $comment->setDate($this->generateDate());
+                    $comment->setPost($post);
+                    if($k % 2 == 0){
+                        $comment->setStatus(false);
+                    }
+                    else $comment->setStatus(true);
+                    $comment->setText("Комментарий " . $k+1);
+                    $comment->setAuthor($user);
+
+                    $manager->persist($comment);
+                }
+            }
+        }
         $manager->flush();
     }
 
